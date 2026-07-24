@@ -1,6 +1,7 @@
 .env
 generated_images/*
 chroma_db/
+documents/
 __pycache__/
 *.pyc
 .pytest_cache/
