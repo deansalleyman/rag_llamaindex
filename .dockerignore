@@ -1,0 +1,15 @@
+# Keep the build context small and secrets/state out of the image.
+.venv/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+.gitattributes
+.DS_Store
+.env
+chroma_db/
+.gradio/
+generated_images/
+scratch/
+docs/
+README.md

@@ -1,0 +1,16 @@
+services:
+  rag:
+    build: .
+    image: rag-lamaindex
+    # HF_TOKEN (and any other secrets) are read from .env; the LLM query
+    # calls the remote HuggingFace Inference API and requires this token.
+    env_file:
+      - .env
+    volumes:
+      # Drop your source files here; picked up on --reingest.
+      - ./documents:/app/documents
+      # Persist the vector store on the host so it survives container restarts.
+      - ./chroma_db:/app/chroma_db
+    # Override the query at run time, e.g.:
+    #   docker compose run --rm rag --query "What is this about?"
+    #   docker compose run --rm rag --reingest
