@@ -8,3 +8,4 @@ llama-index-vector-stores-chroma
 llama-index-tools-google
 llama-index-tools-mcp
 llama-index-utils-workflow
+pytest

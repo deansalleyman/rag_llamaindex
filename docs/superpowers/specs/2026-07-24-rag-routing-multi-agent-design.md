@@ -99,6 +99,21 @@ The module-level `llm` (shared `HuggingFaceInferenceAPI`) is retained for the
 calc agents; the RAG query engine uses the token-aware LLM built inside
 `get_query_engine`.
 
+## Implementation note: streaming-safe HF LLM
+
+Discovered during implementation. The stock `HuggingFaceInferenceAPI` closes its
+shared async client at the end of every streaming call
+(`llama_index/llms/huggingface_api/base.py`, `astream_chat` / `astream_complete`),
+but the client is created once in `__init__`. A ReAct multi-agent workflow
+streams many times on one shared LLM, so after the first stream every later call
+raises `RuntimeError: Cannot send a request, as the client has been closed`.
+
+`resilient_hf_llm.py` provides `ResilientHuggingFaceInferenceAPI`, a thin
+subclass that refreshes the async client before each streaming call. The shared
+agent `llm` in `multiAgentWorkflow.py` uses it. Covered by
+`test_resilient_hf_llm.py` (offline, patched clients). Assumes streams on a given
+instance are sequential (true for a single-query ReAct handoff flow).
+
 ## Error handling
 
 - **Missing `HF_TOKEN`:** `get_query_engine` already raises a `RuntimeError`
